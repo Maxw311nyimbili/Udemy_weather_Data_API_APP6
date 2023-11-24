@@ -13,7 +13,13 @@ app = Flask(__name__)
 
 @app.route("/")
 def home():
-    return render_template("index.html")
+    # to display something on the homepage: add "data=" in the render_template(), then add a paragraph
+    # in the html file as follows <p>{{data}}</p>. Then it will be displayed.
+
+    station = pd.read_csv("data_small/stations.txt",  skiprows=17)
+    station = station[["STAID", "STANAME                                 "]]
+    return render_template("index.html", data=station.to_html())
+    # to_html() displays the data with the html table format
 
 
 @app.route("/api/v1/<station>/<date>")
