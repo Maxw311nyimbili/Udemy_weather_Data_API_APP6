@@ -1,4 +1,5 @@
 from flask import Flask, render_template
+import pandas as pd
 
 # web framework manages multiple web pages. It is responsible to ensure that the
 # web pages interact with each other as intended
@@ -17,7 +18,10 @@ def home():
 
 @app.route("/api/v1/<station>/<date>")
 def about(station, date):
-    temperature = 23
+    filename = "data_small/TG_STAID" + str(station).zfill(6) + ".txt"
+    df = pd.read_csv(filename, skiprows=20, parse_dates=['    DATE'])
+    temperature = df.loc[df['    DATE'] == date]['   TG'].squeeze()/10
+
     return {"station": station, "date": date, "temperature": temperature}
 
 
@@ -28,3 +32,6 @@ def about(station, date):
 # script is executed directly, and not when it is imported in another file.
 if __name__ == "__main__":
     app.run(debug=True)
+# in the case that you are running multiple files, ensure to specify the port that the other apps should occupy
+# on default, flask apps run on port 5000, therefore, if you have a second port, then
+# app.run(debug=True, port=5001)
